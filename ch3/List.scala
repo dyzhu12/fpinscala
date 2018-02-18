@@ -114,14 +114,82 @@ object List {
 
 
   // New dropwhile
-  def dropWhile[A](as: List[A])(f: A => Boolean): List[A] = as match {
-    case Cons(h,t) if f(h) => dropWhile(t)(f)
-    case _ => as }
+  // def dropWhile[A](as: List[A])(f: A => Boolean): List[A] = as match {
+  //   case Cons(h,t) if f(h) => dropWhile(t)(f)
+  //   case _ => as }
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+  def sum2(ns: List[Int]): Int =
+    foldRight(ns, 0)((x, y) => x + y)
+
+  def product2(ds: List[Double]): Double =
+    foldRight(ds, 1.0)((x, y) => x * y)
+
+  // Exercise 3.9
+  def length[A](as: List[A]): Int = {
+    foldRight(as, 0)((x, y) => y + 1)
+  }
+
+  /*
+  def length[A](l: List[A]): Int = 
+    foldRight(l, 0)((_,acc) => acc + 1)
+  */
+
+  // Exercise 3.10
+  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+    as match {
+      case Nil => z
+      case Cons(h, t) => foldLeft(t, f(z, h))(f)
+    }
+
+  /*
+    @annotation.tailrec
+    def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = l match { 
+      case Nil => z
+      case Cons(h,t) => foldLeft(t, f(z,h))(f)
+    }
+  */
+
+  // Exercise 3.11
+  def sumFoldLeft(ns: List[Int]): Int =
+    foldLeft(ns, 0)((x, y) => x + y)
+  def productFoldLeft(ds: List[Double]): Double =
+    foldLeft(ds, 1.0)((x, y) => x * y)
+  def lengthFoldLeft[A](l: List[A]): Int =
+    foldLeft(l, 0)((x, y) => x + 1)
+
+  /*
+  def sum3(l: List[Int]) = foldLeft(l, 0)(_ + _)
+  def product3(l: List[Double]) = foldLeft(l, 1.0)(_ * _)
+
+  def length2[A](l: List[A]): Int = foldLeft(l, 0)((acc,h) => acc + 1)
+  */
+
+
+  // Exercise 3.12
+  //def reverseFoldLeft[A](l: List[A]): List[A] =
+  //  foldLeft(l, Nil)((x, y) => Cons(y, x))
+  def reverseFoldLeft[A](l: List[A]): List[A] =
+    foldLeft(l, List[A]())((x, y) => Cons(y, x))
+  /*
+    def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((acc,h) => Cons(h,acc))
+  */
 
   def main(args: Array[String]): Unit = {
     val list = List(1,2,3,4)
+    val dList = List(1.0, 2.0, 3.0, 4.0)
     println(drop(list, 3))
     println(dropWhile(list, (x: Int) => x < 3))
     println(init(list))
+    println(length(list))
+    println(sumFoldLeft(list))
+    println(productFoldLeft(dList))
+    println(lengthFoldLeft(list))
+    println(reverseFoldLeft(list))
   }
 }
