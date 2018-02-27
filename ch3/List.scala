@@ -172,7 +172,7 @@ object List {
 
 
   // Exercise 3.12
-  //def reverseFoldLeft[A](l: List[A]): List[A] =
+  // def reverseFoldLeft[A](l: List[A]): List[A] =
   //  foldLeft(l, Nil)((x, y) => Cons(y, x))
   def reverseFoldLeft[A](l: List[A]): List[A] =
     foldLeft(l, List[A]())((x, y) => Cons(y, x))
@@ -180,16 +180,47 @@ object List {
     def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((acc,h) => Cons(h,acc))
   */
 
+  // Exercise 3.13 WIP
+  // def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+  //   as match {
+  //     case Nil => z
+  //     case Cons(h, t) => foldRight(t, f(h, z))(f)
+  //   }
+  // def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+  //   as match {
+  //     case Nil => z
+  //     case Cons(h, t) => foldLeft(reverseFoldLeft(t), f(z, h))((b, a) => f(a, b))
+  //   }
+
+  // Exercise 3.14
+  def appendViaFold[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)((a, b) => Cons(a, b))
+
+  def concat[A](a1: List[List[A]]): List[A] =
+    foldRight(a1, List[A]())(appendViaFold)
+
+  // 3.16
+  def addOneToEach(l: List[Int]) =
+    foldRight(l, List[Int]())((a, b) => Cons(a+1, b))
+
+  def turnDoubleToString(l: List[Double]) =
+    foldRight(l, List[String]())((a, b) => Cons(a.toString, b))
+
+  // 3.18
+  def map[A, B](as: List[A])(f: A => B): List[B] =
+    foldRight(as, List[B]())((a, b) => Cons(f(a), b))
+
+  // 3.19
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, List[A]())((a, b) => if f(a) Cons(a, b) else b)
+
   def main(args: Array[String]): Unit = {
     val list = List(1,2,3,4)
-    val dList = List(1.0, 2.0, 3.0, 4.0)
-    println(drop(list, 3))
-    println(dropWhile(list, (x: Int) => x < 3))
-    println(init(list))
-    println(length(list))
-    println(sumFoldLeft(list))
-    println(productFoldLeft(dList))
-    println(lengthFoldLeft(list))
+    val list2 = List(5,6,7,8)
+    val list3 = List(1.0,2.0,3.0,4.0)
     println(reverseFoldLeft(list))
+    println(appendViaFold(list, list2))
+    println(addOneToEach(list))
+    println(turnDoubleToString(list3))
   }
 }
